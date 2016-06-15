@@ -13,4 +13,10 @@ public class StatsTemps
 		temps = time;
 		listeStatsTJ = new ArrayList<StatsTempsJoueur>();
 	}
+
+	@Override
+	public String toString() {
+		return "StatsTemps [listeStatsTJ=" + listeStatsTJ + ", temps=" + temps
+				+ "]";
+	}
 }

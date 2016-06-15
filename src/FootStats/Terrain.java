@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+
+import javax.management.timer.Timer;
 
 public class Terrain 
 {
@@ -32,8 +35,16 @@ public class Terrain
 			BufferedReader br = new BufferedReader(fr);
 			try
 			{
-				String[] ligne = br.readLine().split(",");
-				addStats(ligne);
+				int i = 0;
+				String ligne = br.readLine();
+				while(ligne != null)
+				{
+					i++;
+					System.out.println(i);
+					String[] tab = ligne.split(",");
+					addStats(tab);
+					ligne = br.readLine();
+				}
 				br.close();
 				fr.close();
 			}
@@ -52,15 +63,18 @@ public class Terrain
 	{
 		String n = tab[0].substring(1, tab[0].length()-1);
 		Date timestamp = parseDate(n);
-		StatsTempsJoueur stat = new StatsTempsJoueur(tab);
-		for(StatsTemps s  : listeTemps)
+		StatsTempsJoueur stat = new StatsTempsJoueur(timestamp, tab);
+		
+		if(listeTemps.size() != 0)
 		{
+			StatsTemps s = listeTemps.get(listeTemps.size()-1);
 			if(s.temps.equals(timestamp))
 			{
-				s.listeStatsTJ.add(stat);
-				return;
+			s.listeStatsTJ.add(stat);
+			return;
 			}
 		}
+			
 		StatsTemps nouveau = new StatsTemps(timestamp);
 		nouveau.listeStatsTJ.add(stat);
 		listeTemps.add(nouveau);
@@ -68,39 +82,48 @@ public class Terrain
 	
 	public Date parseDate(String s)
 	{
-		Date d = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SS");
-		try 
+		int t = s.length();
+		int vt = "yyyy-MM-dd hh:mm:ss.SS".length();
+		if(t != vt)
 		{
-			d = df.parse(s);
-		} 
-		catch (ParseException e) 
-		{
-			if(s.contains("."))
+			if(vt - t == 1)
 			{
 				s += "0";
 			}
 			else
 			{
-				s += ".00";
+				s += ".00";		
 			}
-			try
-			{
-				d = df.parse(s);
-			} 
-			catch (ParseException e2) 
-			{
-				e2.printStackTrace();
-			}
+		}
+		Date d = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SS");
+		try 
+		{
+			d = df.parse(s);
+		}
+		catch(ParseException e)
+		{
+			e.printStackTrace();
 		}
 		return d;
 	}
 	
+	@Override
+	public String toString() 
+	{
+		return "Terrain [cheminsFichiers=" + Arrays.toString(cheminsFichiers)
+				+ "\nlisteJoueurs=" + listeJoueurs + "\nlisteTemps="
+				+ listeTemps + "]";
+	}
+
 	public static void main(String[] args)
 	{
 		Terrain e = new Terrain();
 		e.lireFicher(0);
-		System.out.println(e);
+		for(StatsTemps s : e.listeTemps)
+		{
+			System.out.println(s);
+		}
 	}
 	
 }
