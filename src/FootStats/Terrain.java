@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import javax.management.timer.Timer;
-
 public class Terrain 
 {
 	String[] cheminsFichiers = {"2013-11-03_tromso_stromsgodset_first.csv", "2013-11-03_tromso_stromsgodset_second.csv", "2013-11-07_tromso_anji_first.csv", "2013-11-07_tromso_anji_second.csv"};
@@ -59,25 +57,65 @@ public class Terrain
 		}
 	}
 	
+	public StatsTempsJoueur getEnreg(int index) throws ArrayIndexOutOfBoundsException
+	{
+		for(StatsTemps t : this.listeTemps)
+		{
+			if(index > t.listeStatsTJ.size())
+			{
+				index -= t.listeStatsTJ.size();
+			}
+			else
+			{
+				return(t.listeStatsTJ.get(index));
+			}
+		}
+		throw new ArrayIndexOutOfBoundsException();
+	}
+	
 	public void addStats(String[] tab)
 	{
 		String n = tab[0].substring(1, tab[0].length()-1);
 		Date timestamp = parseDate(n);
+		boolean exist;
 		StatsTempsJoueur stat = new StatsTempsJoueur(timestamp, tab);
+		StatsTemps s = listeTemps.get(listeTemps.size()-1);
 		
-		if(listeTemps.size() != 0)
+		if(listeTemps.size() == 0)
 		{
-			StatsTemps s = listeTemps.get(listeTemps.size()-1);
+			exist = false;
+		}
+		else
+		{	
 			if(s.temps.equals(timestamp))
 			{
-			s.listeStatsTJ.add(stat);
-			return;
+				exist = true;
+			}
+			else
+			{
+				exist = false;
 			}
 		}
-			
-		StatsTemps nouveau = new StatsTemps(timestamp);
-		nouveau.listeStatsTJ.add(stat);
-		listeTemps.add(nouveau);
+		if(exist)
+		{
+			s.listeStatsTJ.add(stat);
+		}
+		else
+		{
+			StatsTemps nouveau = new StatsTemps(timestamp);
+			nouveau.listeStatsTJ.add(stat);
+			listeTemps.add(nouveau);
+		}
+		for(JoueurStat j : this.listeJoueurs)
+		{
+			if(j.idJoueur == stat.tag_id)
+			{
+				j.passage((int)stat.pos_x, (int)stat.pos_y);
+				return;
+			}
+		}
+		this.listeJoueurs.add(new JoueurStat(stat.tag_id));
+		this.listeJoueurs.get(this.listeJoueurs.size()-1).passage((int)stat.pos_x, (int)stat.pos_y);
 	}
 	
 	public Date parseDate(String s)
@@ -125,6 +163,5 @@ public class Terrain
 			System.out.println(s);
 		}
 	}
-	
 }
 
