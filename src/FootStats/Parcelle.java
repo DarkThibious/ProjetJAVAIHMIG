@@ -2,6 +2,8 @@ package FootStats;
 
 public class Parcelle 
 {
+	public static int largeur = 68;
+	public static int longueur = 105;
 	int x, y, nbPassages;
 	
 	public Parcelle(int x, int y)
