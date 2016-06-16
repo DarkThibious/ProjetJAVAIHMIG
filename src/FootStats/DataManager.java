@@ -73,6 +73,18 @@ public class DataManager
 		throw new ArrayIndexOutOfBoundsException();
 	}
 	
+	public StatsTemps getEnregT(int index) throws ArrayIndexOutOfBoundsException
+	{
+		if(index<this.listeTemps.size())
+		{
+			return this.listeTemps.get(index);	
+		}
+		else
+		{
+			throw new ArrayIndexOutOfBoundsException();
+		}
+	}
+	
 	public void addStats(String[] tab)
 	{
 		String n = tab[0].substring(1, tab[0].length()-1);
@@ -149,6 +161,23 @@ public class DataManager
 		{
 			System.out.println(s);
 		}
+	}
+
+	public int getRecordTNumber() 
+	{
+		return listeTemps.size();
+	}
+	
+	public JoueurStat getJStatsTot(int playerID) throws NoPlayerException
+	{
+		for(JoueurStat j : this.listeJoueurs)
+		{
+			if(j.idJoueur == playerID)
+			{
+				return j;
+			}
+		}
+		throw new NoPlayerException();
 	}
 }
 
