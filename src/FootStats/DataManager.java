@@ -23,7 +23,7 @@ public class DataManager
 		listeTemps = new ArrayList<StatsTemps>();
 	}
 	
-	void lireFicher(int index)
+	public void lireFichier(int index)
 	{
 		File fichier = new File(cheminsFichiers[index]);
 		FileReader fr = null;
@@ -156,7 +156,7 @@ public class DataManager
 	public static void main(String[] args)
 	{
 		DataManager e = new DataManager();
-		e.lireFicher(0);
+		e.lireFichier(0);
 		for(StatsTemps s : e.listeTemps)
 		{
 			System.out.println(s);

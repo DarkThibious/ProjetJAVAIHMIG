@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class StatsTempsJoueur 
 {
-	Date temps;
-	int tag_id;
-	float pos_x, pos_y;
-	float angleVue, direction;
-	float energie, vitesse, distanceParcourue;
+	public Date temps;
+	public int tag_id;
+	public float pos_x, pos_y;
+	public float angleVue, direction;
+	public float energie, vitesse, distanceParcourue;
 	
 	public StatsTempsJoueur(Date t, String[] tab)
 	{

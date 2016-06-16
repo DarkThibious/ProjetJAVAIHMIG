@@ -5,8 +5,8 @@ import java.util.Date;
 
 public class StatsTemps 
 {
-	ArrayList<StatsTempsJoueur> listeStatsTJ;
-	Date temps;
+	public ArrayList<StatsTempsJoueur> listeStatsTJ;
+	public Date temps;
 	
 	public StatsTemps(Date time)
 	{

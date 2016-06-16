@@ -14,7 +14,7 @@ public class SimpleTest {
 	{
 		//Initialisation de la partie applicative
 		myDataManager = new DataManager();
-		myDataManager.lireFicher(0);
+		myDataManager.lireFichier(0);
 	}
 	
 	@Test
