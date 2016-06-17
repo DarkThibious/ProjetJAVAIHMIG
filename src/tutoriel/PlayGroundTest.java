@@ -194,5 +194,4 @@ public class PlayGroundTest extends SimpleApplication
 		}
 		throw new NoPlayerException();
 	}
-	
 }
