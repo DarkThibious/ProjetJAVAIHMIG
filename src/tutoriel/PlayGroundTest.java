@@ -166,7 +166,7 @@ public class PlayGroundTest extends SimpleApplication
 				{
 					v.player_geom.rotate(0, j.angleVue, 0);
 					v.player_geom.setLocalTranslation(-Parcelle.longueur/2+j.pos_x, 0, -Parcelle.largeur/2+j.pos_y);
-					v.txt.setLocalTranslation(-Parcelle.longueur/2+j.pos_x-0.5f, v.txt.getLineHeight()+0.5f, -Parcelle.largeur/2+j.pos_y+0.5f);
+					v.txt.setLocalTranslation(-Parcelle.longueur/2+j.pos_x, v.txt.getLineHeight()+0.5f, -Parcelle.largeur/2+j.pos_y);
 				}
 				
 				v.txt.lookAt(getCameraPos(), new Vector3f(0,1,0));
