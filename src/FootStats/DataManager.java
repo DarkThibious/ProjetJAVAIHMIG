@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class DataManager 
 {
-	String[] cheminsFichiers = {"2013-11-03_tromso_stromsgodset_first.csv", "2013-11-03_tromso_stromsgodset_second.csv", "2013-11-07_tromso_anji_first.csv", "2013-11-07_tromso_anji_second.csv"};
+	static String[] cheminsFichiers = {"2013-11-03_tromso_stromsgodset_first.csv", "2013-11-03_tromso_stromsgodset_second.csv", "2013-11-07_tromso_anji_first.csv", "2013-11-07_tromso_anji_second.csv"};
 	ArrayList<JoueurStat> listeJoueurs;
 	ArrayList<StatsTemps> listeTemps;
 	
@@ -153,7 +153,7 @@ public class DataManager
 				+ listeTemps + "]";
 	}
 
-	public static void main(String[] args)
+	/*public static void main(String[] args)
 	{
 		DataManager e = new DataManager();
 		e.lireFichier(0);
@@ -161,7 +161,7 @@ public class DataManager
 		{
 			System.out.println(s);
 		}
-	}
+	}*/
 
 	public int getRecordTNumber() 
 	{

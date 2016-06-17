@@ -114,8 +114,6 @@ public class WindowedTest
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		canvasApplication.data.lireFichier(0);
-		canvasApplication.update(canvasApplication.data.getEnregT(0));
 	}
 	
 	public static DataManager chargerFichier(int index)
@@ -158,6 +156,7 @@ public class WindowedTest
 		// Create the JFrame with the Canvas on the middle
 		createNewJFrame();
 		canvasApplication.setPauseOnLostFocus(false);
+		canvasApplication.init();
 	}
 
 }
