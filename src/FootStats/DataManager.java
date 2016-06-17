@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class DataManager 
 {
-	static String[] cheminsFichiers = {"2013-11-03_tromso_stromsgodset_first.csv", "2013-11-03_tromso_stromsgodset_second.csv", "2013-11-07_tromso_anji_first.csv", "2013-11-07_tromso_anji_second.csv"};
+	static String[] cheminsFichiers = {"res/2013-11-03_tromso_stromsgodset_first.csv", "res/2013-11-03_tromso_stromsgodset_second.csv", "res/2013-11-07_tromso_anji_first.csv", "res/2013-11-07_tromso_anji_second.csv"};
 	ArrayList<JoueurStat> listeJoueurs;
 	ArrayList<StatsTemps> listeTemps;
 	
