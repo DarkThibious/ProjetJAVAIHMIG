@@ -15,6 +15,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.*;
 
@@ -33,15 +34,63 @@ public class WindowedTest
 	
 	private static void createNewJFrame() {
 
-		time = new Timer(5, null);
-		frame = new JFrame("Java - Graphique - IHM");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.addWindowListener(new WindowAdapter()
+		time = new Timer(50, new ActionListener() 
 		{
 			@Override
-			public void windowClosed(WindowEvent e) 
+			public void actionPerformed(ActionEvent e) 
 			{
+				if(canvasApplication.loaded)
+				{
+					if(canvasApplication.i<canvasApplication.data.listeTemps.size())
+					{
+						System.out.println("Increment");
+						canvasApplication.i++;
+						canvasApplication.frozen = false;	
+					}
+				}
+			}
+		});
+		time.start();
+		frame = new JFrame("Java - Graphique - IHM");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.addWindowListener(new WindowListener()
+		{
+			@Override
+			public void windowOpened(WindowEvent e)
+			{
+				
+			}
+			@Override
+			public void windowClosing(WindowEvent e) 
+			{
+				System.out.print("sdkjhfjsd");
 				canvasApplication.stop();
+				frame.dispose();
+			}
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 
@@ -156,7 +205,6 @@ public class WindowedTest
 		// Create the JFrame with the Canvas on the middle
 		createNewJFrame();
 		canvasApplication.setPauseOnLostFocus(false);
-		canvasApplication.init();
 	}
 
 }

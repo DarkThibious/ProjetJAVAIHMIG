@@ -33,7 +33,9 @@ public class PlayGroundTest extends SimpleApplication
 	DataManager data;
 	int i = 0;
 	boolean frozen = false;
+	boolean loaded;
 	Node field_node;
+	Node load_node;
 	ArrayList<VisuJoueurs> joueurs;
 	Spatial player_geom;
 	ChaseCamera chaseCam;
@@ -50,6 +52,12 @@ public class PlayGroundTest extends SimpleApplication
 		field_node.attachChild(field_geom);
 		rootNode.attachChild(field_node);
 		
+		load_node = new Node("loading");
+		BitmapText loading = new BitmapText(guiFont);
+		loading.setText("LOADING...");
+		load_node.attachChild(loading);
+		rootNode.attachChild(load_node);
+		
 		DirectionalLight directionalLight = new DirectionalLight(new Vector3f(-2, -10,1));
 		directionalLight.setColor(ColorRGBA.White.mult(1.3f));
 		rootNode.addLight(directionalLight);
@@ -60,10 +68,10 @@ public class PlayGroundTest extends SimpleApplication
 		chaseCam.setDragToRotate(true);
 		chaseCam.setInvertVerticalAxis(true);
 		chaseCam.setRotationSpeed(10.0f);
-		chaseCam.setMinVerticalRotation((float) - (Math.PI/2 - 0.0001f));
+		chaseCam.setMinVerticalRotation(0.001f);//(float) - (Math.PI/2 - 0.0001f));
 		chaseCam.setMaxVerticalRotation((float) Math.PI/2);
 		chaseCam.setMinDistance(7.5f);
-		chaseCam.setMaxDistance(30.0f);
+		chaseCam.setMaxDistance(100.0f);
 		
 		viewPort.setBackgroundColor(new ColorRGBA(0, 0, 0, 0));
 		
@@ -78,7 +86,7 @@ public class PlayGroundTest extends SimpleApplication
 		mat.setColor("Color",ColorRGBA.Red);
 		lineGeo.setMaterial(mat);
 		LinesNode.attachChild(lineGeo);
-		rootNode.attachChild(LinesNode);
+		field_node.attachChild(LinesNode);
 		
 		LinesNode = new Node("linesNode");
 		oldVect = new Vector3f(0,0,0);
@@ -90,7 +98,7 @@ public class PlayGroundTest extends SimpleApplication
 		mat.setColor("Color",ColorRGBA.Green);
 		lineGeo.setMaterial(mat);
 		LinesNode.attachChild(lineGeo);
-		rootNode.attachChild(LinesNode);
+		field_node.attachChild(LinesNode);
 		
 		LinesNode = new Node("linesNode");
 		oldVect = new Vector3f(0,0,0);
@@ -102,7 +110,7 @@ public class PlayGroundTest extends SimpleApplication
 		mat.setColor("Color",ColorRGBA.Blue);
 		lineGeo.setMaterial(mat);
 		LinesNode.attachChild(lineGeo);
-		rootNode.attachChild(LinesNode);
+		field_node.attachChild(LinesNode);
 		
 		LinesNode = new Node("linesNode");
 		oldVect = new Vector3f(0,0,0);
@@ -114,7 +122,7 @@ public class PlayGroundTest extends SimpleApplication
 		mat.setColor("Color",ColorRGBA.Pink);
 		lineGeo.setMaterial(mat);
 		LinesNode.attachChild(lineGeo);
-		rootNode.attachChild(LinesNode);
+		field_node.attachChild(LinesNode);
 		
 		/* Faire un ressort
 		Vector3f oldVect = new Vector3f(1, 0,0);
@@ -133,21 +141,31 @@ public class PlayGroundTest extends SimpleApplication
 			oldVect=newVect;
 		}
 		*/
+		System.out.println("OUI");
+		init();
 	}
 	
 	public void init()
 	{
-		data = new DataManager();
-		data.lireFichier(2);
+		chargementFichier(2);
 	}
 	
 	@Override
 	public void simpleUpdate(float tpf)
 	{
-		int i = 0;
-		
+		if(loaded)
+		{
 			VisuJoueurs v;
+			System.out.println("Affichage : "+ i);
 			StatsTemps t = data.getEnregT(i);
+			if(!frozen)
+			{
+				for(VisuJoueurs vJ : joueurs)
+				{
+					field_node.detachChild(vJ.player_geom);
+					field_node.detachChild(vJ.txt);
+				}	
+			}
 			for(StatsTempsJoueur j : t.listeStatsTJ)
 			{
 				try 
@@ -158,20 +176,23 @@ public class PlayGroundTest extends SimpleApplication
 				{
 					v = new VisuJoueurs(j.tag_id, player_geom, guiFont);
 					joueurs.add(v);
-					field_node.attachChild(v.player_geom);
-					field_node.attachChild(v.txt);
-					
 				}
 				if(!frozen)
 				{
-					v.player_geom.rotate(0, j.angleVue, 0);
-					v.player_geom.setLocalTranslation(-Parcelle.longueur/2+j.pos_x, 0, -Parcelle.largeur/2+j.pos_y);
+					field_node.attachChild(v.player_geom);
+					field_node.attachChild(v.txt);
+					v.player_geom.center();
+					v.txt.center();
+					v.player_geom.rotate(0, (j.direction-v.angleAct), 0);
+					v.angleAct = j.direction;
+					v.player_geom.setLocalTranslation(Parcelle.longueur/2-j.pos_x, 0, Parcelle.largeur/2+j.pos_y); //
 					v.txt.setLocalTranslation(-Parcelle.longueur/2+j.pos_x, v.txt.getLineHeight()+0.5f, -Parcelle.largeur/2+j.pos_y);
 				}
-				
+
 				v.txt.lookAt(getCameraPos(), new Vector3f(0,1,0));
 			}
-		frozen = true;
+			frozen = true;
+		}
 	}
 	
 	public Vector3f getCameraPos()
@@ -193,5 +214,22 @@ public class PlayGroundTest extends SimpleApplication
 			}
 		}
 		throw new NoPlayerException();
+	}
+	
+	public void chargementFichier(int index)
+	{
+		loaded = false;
+		rootNode.detachAllChildren();
+		chaseCam.setEnabled(false);
+		flyCam.setEnabled(true);
+		rootNode.attachChild(this.load_node);
+		data = new DataManager();
+		data.lireFichier(index);
+		System.out.println("FNI");
+		rootNode.detachAllChildren();
+		rootNode.attachChild(field_node);
+		chaseCam.setEnabled(true);
+		flyCam.setEnabled(false);
+		loaded = true;
 	}
 }

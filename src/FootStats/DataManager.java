@@ -15,7 +15,7 @@ public class DataManager
 {
 	static String[] cheminsFichiers = {"res/2013-11-03_tromso_stromsgodset_first.csv", "res/2013-11-03_tromso_stromsgodset_second.csv", "res/2013-11-07_tromso_anji_first.csv", "res/2013-11-07_tromso_anji_second.csv"};
 	ArrayList<JoueurStat> listeJoueurs;
-	ArrayList<StatsTemps> listeTemps;
+	public ArrayList<StatsTemps> listeTemps;
 	
 	public DataManager()
 	{
@@ -37,8 +37,8 @@ public class DataManager
 				String ligne = br.readLine();
 				while(ligne != null)
 				{
-					i++;
-					System.out.println(i);
+					//i++;
+					//System.out.println(i);
 					String[] tab = ligne.split(",");
 					addStats(tab);
 					ligne = br.readLine();

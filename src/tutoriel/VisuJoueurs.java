@@ -8,7 +8,9 @@ public class VisuJoueurs
 {
 	int tag_id;
 	Spatial player_geom;
+	float angleAct = 0;
 	BitmapText txt;
+	
 	
 	public VisuJoueurs(int tag_id, Spatial geom, BitmapFont guiFont)
 	{
