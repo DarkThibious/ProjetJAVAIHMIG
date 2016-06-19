@@ -193,7 +193,7 @@ public class WindowedTest
   				
  				if(menuListener==quitItem)
  				{
- 					
+ 					frame.dispose();
  				}
  				else if(menuListener==itemOuvrir1)
  				{
