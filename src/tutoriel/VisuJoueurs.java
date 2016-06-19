@@ -10,6 +10,7 @@ public class VisuJoueurs
 	Spatial player_geom;
 	float angleAct = 0;
 	BitmapText txt;
+	boolean toDisplay = true;
 	
 	
 	public VisuJoueurs(int tag_id, Spatial geom, BitmapFont guiFont)

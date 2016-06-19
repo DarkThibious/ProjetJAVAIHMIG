@@ -1,14 +1,25 @@
 package tutoriel;
 
 import FootStats.DataManager;
+import FootStats.NoPlayerException;
+import FootStats.StatsTemps;
+import FootStats.StatsTempsJoueur;
 
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
+import de.lessvoid.nifty.controls.CheckBox;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Checkbox;
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -16,82 +27,92 @@ import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class WindowedTest 
 {	
+	private static DataManager data;
+	private static int i = 0;
 	private static PlayGroundTest canvasApplication;
 	private static Timer time;
 	
 	private static Canvas canvas; // JAVA Swing Canvas
 	
-	private static JFrame frame;
+	private static JDialog dial;
+	private static JPanel pane;
+	
+	private static JFrame frame;	
 	private static JPanel panel;
 	private static JPanel lecturePanel;
+	private static JPanel playerChoicePanel;
+	private static ArrayList<JCheckBox> players; 
+	private static JSlider timebar;
 	
 	
-	
-	private static void createNewJFrame() {
-
+	private static void createNewJFrame() 
+	{	
+		//Dialog Loading
+		dial = new JDialog(frame, "Loading...");
+		pane = new JPanel();
+		JLabel cautionText = new JLabel("Please wait while the data is loaded \n" + '\n');
+		cautionText.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
+		pane.add(cautionText);
+		dial.add(pane);
+		dial.pack();
+		
+		//Timer
 		time = new Timer(50, new ActionListener() 
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(canvasApplication.loaded)
+				if(i < data.listeTemps.size())
 				{
-					if(canvasApplication.i<canvasApplication.data.listeTemps.size())
-					{
-						System.out.println("Increment");
-						canvasApplication.i++;
-						canvasApplication.frozen = false;	
-					}
+					System.out.println("Increment");
+					StatsTemps t = data.getEnregT(i);
+					update(t);
+					canvasApplication.displaying = t;
+					i++;
+					timebar.setValue(i);
+				}
+				if(i == 1)
+				{
+					frame.pack();
 				}
 			}
 		});
-		time.start();
+		
+		//Main Frame
 		frame = new JFrame("Java - Graphique - IHM");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.addWindowListener(new WindowListener()
 		{
 			@Override
-			public void windowOpened(WindowEvent e)
-			{
-				
-			}
+			public void windowOpened(WindowEvent e) {}
 			@Override
 			public void windowClosing(WindowEvent e) 
 			{
+				time.stop();
 				System.out.print("sdkjhfjsd");
 				canvasApplication.stop();
 				frame.dispose();
+				System.exit(0);
 			}
 			@Override
-			public void windowActivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void windowActivated(WindowEvent e) {}
 			@Override
-			public void windowClosed(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void windowClosed(WindowEvent e) {}
 			@Override
-			public void windowDeactivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void windowDeactivated(WindowEvent e) {}
 			@Override
-			public void windowDeiconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void windowDeiconified(WindowEvent e) {}
 			@Override
-			public void windowIconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void windowIconified(WindowEvent e) {}
 		});
 
 		// Create the menus
@@ -103,7 +124,19 @@ public class WindowedTest
 		
 		final JMenuItem quitItem = new JMenuItem("Quit");
 		final JMenuItem getControlsItem = new JMenuItem("Get controls");
+		
+		final JMenuItem itemOuvrir1 = new JMenuItem("Tromso vs Stromgodset - 1");
+		final JMenuItem itemOuvrir2 = new JMenuItem("Tromso vs Stromgodset - 2");
+		final JMenuItem itemOuvrir3 = new JMenuItem("Tromso vs Anji - 1");
+		final JMenuItem itemOuvrir4 = new JMenuItem("Tromso vs Anji - 2");
+		final JMenuItem itemOuvrir5 = new JMenuItem("Other...");
 
+		openNewFileMenu.add(itemOuvrir1);
+		openNewFileMenu.add(itemOuvrir2);
+		openNewFileMenu.add(itemOuvrir3);
+		openNewFileMenu.add(itemOuvrir4);
+		openNewFileMenu.add(itemOuvrir5);
+		
 		fileMenu.add(openNewFileMenu);
 		fileMenu.add(quitItem);
 		helpMenu.add(getControlsItem);
@@ -151,38 +184,151 @@ public class WindowedTest
 			}
 		});
 		
+		ActionListener menuListener = new ActionListener()
+ 		{
+ 			@Override
+ 		    public void actionPerformed(ActionEvent event)
+ 			{
+ 				JMenuItem menuListener = (JMenuItem) event.getSource();
+  				
+ 				if(menuListener==quitItem)
+ 				{
+ 					
+ 				}
+ 				else if(menuListener==itemOuvrir1)
+ 				{
+ 					chargementFichier(0);
+ 				}
+ 				else if(menuListener==itemOuvrir2)
+ 				{
+ 					chargementFichier(1);
+ 				}
+ 				else if(menuListener==itemOuvrir3)
+ 				{
+ 					chargementFichier(2);
+ 				}
+ 				else if(menuListener==itemOuvrir4)
+ 				{
+ 					chargementFichier(3);
+ 				}
+ 				else if(menuListener==itemOuvrir5)
+ 				{
+ 					JFileChooser file = new JFileChooser();
+ 					file.showOpenDialog(frame);
+ 					file.getSelectedFile();
+ 					file.setVisible(true);
+ 				}
+ 			}
+ 		};
+ 		
+     	quitItem.addActionListener(menuListener);
+     	itemOuvrir1.addActionListener(menuListener);
+     	itemOuvrir2.addActionListener(menuListener);
+     	itemOuvrir3.addActionListener(menuListener);
+     	itemOuvrir4.addActionListener(menuListener);
+     	itemOuvrir5.addActionListener(menuListener);
+     	
+     	//Left Panel
+     	JPanel westPanel = new JPanel(); 
+     	westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
+     	westPanel.add(new JLabel("Joueurs"));
+		playerChoicePanel = new JPanel(new GridLayout(10, 2));
+		
+		westPanel.add(playerChoicePanel);
+		westPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		westPanel.add(Box.createGlue());
+		
+		//Central Panel
 		panel = new JPanel(new BorderLayout());
-		
-		JButton Test = new JButton("Swing Components");
-		panel.add(Test, BorderLayout.WEST);
-		
+		panel.add(westPanel, BorderLayout.WEST);
 		// Add the canvas to the panel
 		panel.add(canvas, BorderLayout.CENTER);
-		
 		frame.add(panel);
+		
+		lecturePanel = new JPanel();
+		lecturePanel.setLayout(new FlowLayout()); 
+		JButton play = new JButton("lECTURE");
+		lecturePanel.add(play);
+		timebar = new JSlider(0);
+		timebar.addChangeListener(new ChangeListener() 
+		{	
+			@Override
+			public void stateChanged(ChangeEvent e) 
+			{
+				i = ((JSlider) e.getSource()).getValue();
+				
+			}
+		});
+		lecturePanel.add(timebar);
+		frame.add(lecturePanel, BorderLayout.SOUTH);
+		
 		frame.pack();
+		playerChoicePanel.setPreferredSize(new Dimension(frame.getWidth()/6,frame.getHeight()*3/4));
+		playerChoicePanel.setSize(playerChoicePanel.getPreferredSize());
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		
+		chargementFichier(0);
 	}
 	
-	public static DataManager chargerFichier(int index)
+	public static void update(StatsTemps t)
 	{
-		JDialog g = new JDialog();
-		DataManager da = new DataManager();
-		g.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
-		g.setLayout(new BorderLayout(20,20));
-		g.add(new JLabel("Loading..."), BorderLayout.CENTER);
-		g.toFront();
-		g.setAlwaysOnTop(true);
-		g.pack();
-		g.setLocationRelativeTo(null);
-		g.setLocation(g.getX()-g.getWidth()/2, g.getY()-g.getHeight()/2);
-		g.setVisible(true);
-		g.dispose();
-		return da;
+		boolean exist;
+		
+		for(StatsTempsJoueur j : t.listeStatsTJ)
+		{
+			exist = false;
+			for(JCheckBox c : players)
+			{
+				if(c.getText().equals(Integer.toString(j.tag_id)))
+				{
+					exist = true;
+					break;
+				}
+			}
+			if(!exist)
+			{
+				JCheckBox c = new JCheckBox(Integer.toString(j.tag_id));
+				c.setSelected(true);
+				players.add(c);
+				c.setVisible(true);
+				playerChoicePanel.add(c);
+			}
+		}	
+		for(JCheckBox cbx : players)
+		{
+			try 
+			{
+				canvasApplication.getPlayer(Integer.parseInt(cbx.getText())).toDisplay = cbx.isSelected();
+			} catch (NumberFormatException e) 
+			{
+				e.printStackTrace();
+			} catch (NoPlayerException e) 
+			{
+			}
+		}
+		//frame.pack();
+		playerChoicePanel.setSize(playerChoicePanel.getPreferredSize());
+	}
+	
+	public static void chargementFichier(int index)
+	{
+		players = new ArrayList<JCheckBox>();
+		dial.setLocationRelativeTo(frame);
+		dial.setVisible(true);
+		dial.setAlwaysOnTop(true);
+		time.stop();
+		i = 0;
+		data = new DataManager();
+		data.lireFichier(index);
+		dial.setVisible(false);
+		timebar.setMaximum(data.getRecordTNumber());
+		timebar.setValue(0);
+		time.restart();
 	}
 
-	public static void main(String[] args){
+	public static void main(String[] args)
+	{
 		// create new JME appsettings
 		AppSettings settings = new AppSettings(true);
 		settings.setResolution(1280, 800);
