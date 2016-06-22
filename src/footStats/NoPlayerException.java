@@ -1,4 +1,4 @@
-package FootStats;
+package footStats;
 
 public class NoPlayerException extends Exception 
 {

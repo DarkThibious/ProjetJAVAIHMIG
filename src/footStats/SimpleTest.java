@@ -1,4 +1,4 @@
-package FootStats;
+package footStats;
 
 import static org.junit.Assert.*;
 
@@ -55,9 +55,9 @@ public class SimpleTest {
 			
 			JoueurStat j = myDataManager.getJStatsTot(14);
 			good = true;
-			for(int x=0;x < Parcelle.longueur;x++)
+			for(int x=0;x < Parcelle.LONGUEUR;x++)
 			{
-				for(int y=0;y < Parcelle.largeur;y++)
+				for(int y=0;y < Parcelle.LARGEUR;y++)
 				{
 					if(j.getPassage(x, y) > 314)
 					{

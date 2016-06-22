@@ -1,4 +1,4 @@
-package FootStats;
+package footStats;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,7 +33,6 @@ public class DataManager
 			BufferedReader br = new BufferedReader(fr);
 			try
 			{
-				int i = 0;
 				String ligne = br.readLine();
 				while(ligne != null)
 				{
@@ -107,18 +106,19 @@ public class DataManager
 			nouveau.listeStatsTJ.add(stat);
 			listeTemps.add(nouveau);
 		}
-		if(stat.pos_x >= 0 && stat.pos_y >= 0 && stat.pos_x < Parcelle.longueur && stat.pos_y < Parcelle.largeur)
+		JoueurStat j;
+		try 
 		{
-			for(JoueurStat j : this.listeJoueurs)
-			{
-				if(j.getID() == stat.tag_id)
-				{
+			j = getJStatsTot(stat.tag_id);
+		} 
+		catch (NoPlayerException e) 
+		{
+			j = new JoueurStat(stat.tag_id);
+			this.listeJoueurs.add(j);
+		}
+		if(stat.pos_x >= 0 && stat.pos_y >= 0 && stat.pos_x < Parcelle.LONGUEUR && stat.pos_y < Parcelle.LARGEUR)
+		{
 					j.passage((int)stat.pos_x, (int)stat.pos_y);
-					return;
-				}
-			}
-			this.listeJoueurs.add(new JoueurStat(stat.tag_id));
-			this.listeJoueurs.get(this.listeJoueurs.size()-1).passage((int)stat.pos_x, (int)stat.pos_y);
 		}
 	}
 	

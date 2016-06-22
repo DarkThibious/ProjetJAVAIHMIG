@@ -1,9 +1,9 @@
-package FootStats;
+package footStats;
 
 public class Parcelle 
 {
-	public static int largeur = 68;
-	public static int longueur = 105;
+	public static final int LARGEUR = 68;
+	public static final int LONGUEUR = 105;
 	int x, y, nbPassages;
 	
 	public Parcelle(int x, int y)

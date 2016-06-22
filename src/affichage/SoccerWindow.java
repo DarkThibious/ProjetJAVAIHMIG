@@ -1,31 +1,24 @@
-package tutoriel;
+package affichage;
 
-import FootStats.DataManager;
-import FootStats.JoueurStat;
-import FootStats.NoPlayerException;
-import FootStats.StatsTemps;
-import FootStats.StatsTempsJoueur;
 
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
-import de.lessvoid.nifty.controls.CheckBox;
+import footStats.DataManager;
+import footStats.JoueurStat;
+import footStats.NoPlayerException;
+import footStats.StatsTemps;
+
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Checkbox;
-import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.WindowAdapter;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -48,11 +41,13 @@ public class SoccerWindow
 	
 	private static JFrame frame;	
 	private static JPanel panel;
+	private static JButton play;
 	private static JPanel lecturePanel;
+	private static JLabel timeLbl;
 	private static JPanel playerChoicePanel;
 	private static ArrayList<JCheckBox> players; 
 	private static JSlider timebar;
-	
+	private static int delay = 50;
 	
 	private static void createNewJFrame() 
 	{	
@@ -67,7 +62,7 @@ public class SoccerWindow
 		dial.pack();
 		
 		//Timer
-		time = new Timer(50, new ActionListener() 
+		time = new Timer(delay, new ActionListener() 
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
@@ -75,9 +70,9 @@ public class SoccerWindow
 				if(i < data.getRecordTNumber())
 				{
 					StatsTemps t = data.getEnregT(i);
-			//		update(t);
 					canvasApplication.displaying = t;
 					i++;
+					timeLbl.setText(t.temps.toString());
 					timebar.setValue(i);
 				}
 				if(i == 1)
@@ -90,24 +85,30 @@ public class SoccerWindow
 		//Main Frame
 		frame = new JFrame("Java - Graphique - IHM");
 		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.addWindowListener(new WindowListener()
 		{
 			@Override
 			public void windowOpened(WindowEvent e) {}
 			@Override
-			public void windowClosing(WindowEvent e) 
-			{
-				time.stop();
-				System.out.print("sdkjhfjsd");
-				canvasApplication.stop();
-				frame.dispose();
-				System.exit(0);
-			}
+			public void windowClosing(WindowEvent e) {}
 			@Override
 			public void windowActivated(WindowEvent e) {}
 			@Override
-			public void windowClosed(WindowEvent e) {}
+			public void windowClosed(WindowEvent e) 
+			{
+				System.out.print("sdkjhfjsd");
+				time.stop();
+				canvasApplication.stop();
+				try 
+				{
+					wait(100);
+				} catch (InterruptedException e1) 
+				{
+					e1.printStackTrace();
+				}
+			}
+			
 			@Override
 			public void windowDeactivated(WindowEvent e) {}
 			@Override
@@ -130,13 +131,11 @@ public class SoccerWindow
 		final JMenuItem itemOuvrir2 = new JMenuItem("Tromso vs Stromgodset - 2");
 		final JMenuItem itemOuvrir3 = new JMenuItem("Tromso vs Anji - 1");
 		final JMenuItem itemOuvrir4 = new JMenuItem("Tromso vs Anji - 2");
-		final JMenuItem itemOuvrir5 = new JMenuItem("Other...");
 
 		openNewFileMenu.add(itemOuvrir1);
 		openNewFileMenu.add(itemOuvrir2);
 		openNewFileMenu.add(itemOuvrir3);
 		openNewFileMenu.add(itemOuvrir4);
-		openNewFileMenu.add(itemOuvrir5);
 		
 		fileMenu.add(openNewFileMenu);
 		fileMenu.add(quitItem);
@@ -212,13 +211,6 @@ public class SoccerWindow
  				{
  					chargementFichier(3);
  				}
- 				else if(menuListener==itemOuvrir5)
- 				{
- 					JFileChooser file = new JFileChooser();
- 					file.showOpenDialog(frame);
- 					file.getSelectedFile();
- 					file.setVisible(true);
- 				}
  			}
  		};
  		
@@ -227,18 +219,15 @@ public class SoccerWindow
      	itemOuvrir2.addActionListener(menuListener);
      	itemOuvrir3.addActionListener(menuListener);
      	itemOuvrir4.addActionListener(menuListener);
-     	itemOuvrir5.addActionListener(menuListener);
      	
      	//Left Panel
      	
      	JPanel westPanel = new JPanel(); 
-     	westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
-     	westPanel.add(new JLabel("Joueurs"));
-		playerChoicePanel = new JPanel(new GridLayout(10, 2));
+     	westPanel.setLayout(new BorderLayout());
+     	westPanel.add(new JLabel("Joueurs"), BorderLayout.NORTH);
+     	playerChoicePanel = new JPanel(new GridLayout(10, 2));
 		
-		westPanel.add(playerChoicePanel);
-		westPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		westPanel.add(Box.createGlue());
+		westPanel.add(playerChoicePanel, BorderLayout.CENTER);
 		
 		//Central Panel
 		panel = new JPanel(new BorderLayout());
@@ -248,10 +237,45 @@ public class SoccerWindow
 		frame.add(panel);
 		
 		lecturePanel = new JPanel();
-		lecturePanel.setLayout(new FlowLayout()); 
-		JButton play = new JButton("lECTURE");
+		lecturePanel.setLayout(new FlowLayout());
+		
+		JButton stop = new JButton("Stop");
+		stop.addActionListener(new ActionListener() 
+		{	
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				i = 0;
+				time.getActionListeners()[0].actionPerformed(null);
+				play.setText("Lecture");
+				time.stop();
+			}
+		});
+		lecturePanel.add(stop);
+		play = new JButton("Pause");
+		play.addActionListener(new ActionListener() 
+		{	
+			@Override
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				JButton b = (JButton) (arg0.getSource());
+				if(b.getText().equals("Lecture"))
+				{
+					time.start();
+					b.setText("Pause");
+				}
+				else
+				{
+					time.stop();
+					b.setText("Lecture");
+				}
+			}
+		});
+		
 		lecturePanel.add(play);
+		
 		timebar = new JSlider(0);
+		timebar.setValue(0);
 		timebar.addChangeListener(new ChangeListener() 
 		{	
 			@Override
@@ -262,8 +286,43 @@ public class SoccerWindow
 			}
 		});
 		lecturePanel.add(timebar);
-		frame.add(lecturePanel, BorderLayout.SOUTH);
+		timeLbl = new JLabel();
+		lecturePanel.add(timeLbl);
 		
+		ButtonGroup group = new ButtonGroup();
+		
+		JToggleButton speed = new JToggleButton("x1");
+		JToggleButton speed2 = new JToggleButton("x2");
+		JToggleButton speed4 = new JToggleButton("x4");
+		JToggleButton speed8 = new JToggleButton("x8");
+		JToggleButton speed16 = new JToggleButton("x16");
+		
+		speed.setName("1");
+		speed2.setName("2");
+		speed4.setName("4");
+		speed8.setName("8");
+		speed16.setName("16");
+		
+		speed.addActionListener(speedListener);
+		speed2.addActionListener(speedListener);
+		speed4.addActionListener(speedListener);
+		speed8.addActionListener(speedListener);
+		speed16.addActionListener(speedListener);
+		
+		group.add(speed);
+		group.add(speed2);
+		group.add(speed4);
+		group.add(speed8);
+		group.add(speed16);
+		
+		lecturePanel.add(speed);
+		lecturePanel.add(speed2);
+		lecturePanel.add(speed4);
+		lecturePanel.add(speed8);
+		lecturePanel.add(speed16);
+		
+		frame.add(lecturePanel, BorderLayout.SOUTH);
+
 		frame.pack();
 		playerChoicePanel.setPreferredSize(new Dimension(frame.getWidth()/6,frame.getHeight()*3/4));
 		playerChoicePanel.setSize(playerChoicePanel.getPreferredSize());
@@ -271,57 +330,34 @@ public class SoccerWindow
 		frame.setVisible(true);
 		
 		chargementFichier(0);
-		
-		for(JoueurStat j : data.getListeJoueur())
-		{
-			JCheckBox c = new JCheckBox(Integer.toString(j.getID()));
-			c.setSelected(true);
-			players.add(c);
-			c.setVisible(true);
-			playerChoicePanel.add(c);
-		}
 	}
 	
-	/*public static void update(StatsTemps t)
-	{
-		boolean exist;
-		
-		for(StatsTempsJoueur j : t.listeStatsTJ)
+	public static ActionListener speedListener = new ActionListener() 
+	{	
+		@Override
+		public void actionPerformed(ActionEvent e) 
 		{
-			exist = false;
-			for(JCheckBox c : players)
-			{
-				if(c.getText().equals(Integer.toString(j.tag_id)))
-				{
-					exist = true;
-					break;
-				}
-			}
-			if(!exist)
-			{
-				JCheckBox c = new JCheckBox(Integer.toString(j.tag_id));
-				c.setSelected(true);
-				players.add(c);
-				c.setVisible(true);
-				playerChoicePanel.add(c);
-			}
-		}	
-		for(JCheckBox cbx : players)
+			time.setDelay(delay/(Integer.parseInt(((JToggleButton) e.getSource()).getName())));
+		}
+	}; 
+	
+	public static ItemListener itemStateChanged = new ItemListener() 
+	{	
+		@Override
+		public void itemStateChanged(ItemEvent e) 
 		{
-			try 
-			{
+			JCheckBox cbx = (JCheckBox) e.getSource();
+			try {
 				canvasApplication.getPlayer(Integer.parseInt(cbx.getText())).toDisplay = cbx.isSelected();
-			} catch (NumberFormatException e) 
-			{
-				e.printStackTrace();
-			} catch (NoPlayerException e) 
-			{
-				System.err.println("No player with that id : "+ cbx.getText());
+			} catch (NumberFormatException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (NoPlayerException e1) {
+				// TODO Auto-generated catch block
+				System.err.println("Pas de joueur : " + cbx.getText());
 			}
 		}
-		//frame.pack();
-		playerChoicePanel.setSize(playerChoicePanel.getPreferredSize());
-	}*/
+	};
 	
 	public static void chargementFichier(int index)
 	{
@@ -333,6 +369,27 @@ public class SoccerWindow
 		i = 0;
 		data = new DataManager();
 		data.lireFichier(index);
+		playerChoicePanel.removeAll();
+		int i = 1,nb = 0;
+		JoueurStat j;
+		while(nb != data.getListeJoueur().size())
+		{
+			try 
+			{
+				j = data.getJStatsTot(i);
+				JCheckBox c = new JCheckBox(Integer.toString(j.getID()));
+				c.setSelected(true);
+				players.add(c);
+				playerChoicePanel.add(c);
+				c.addItemListener(itemStateChanged);
+				nb++;
+			} catch (NoPlayerException e) {
+				
+			}
+			i++;
+		}
+		canvasApplication.createJoueurs(data.getListeJoueur());
+		
 		dial.setVisible(false);
 		timebar.setMaximum(data.getRecordTNumber());
 		timebar.setValue(0);
@@ -348,12 +405,13 @@ public class SoccerWindow
 		canvasApplication = new SoccerApplication();
 		canvasApplication.setSettings(settings);
 		canvasApplication.setShowSettings(false);
-		canvasApplication.createCanvas();
 		settings.setFrameRate(60);
 		settings.setVSync(true);
 		canvasApplication.setDisplayStatView(false);
 		canvasApplication.setDisplayFps(false);
 
+		canvasApplication.createCanvas();
+		
 		JmeCanvasContext ctx = (JmeCanvasContext) canvasApplication.getContext();
 		canvas = ctx.getCanvas();
 		Dimension dim = new Dimension(settings.getWidth(), settings.getHeight());

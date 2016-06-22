@@ -1,46 +1,38 @@
-package tutoriel;
+package affichage;
 
 import java.util.ArrayList;
 
-import FootStats.DataManager;
-import FootStats.NoPlayerException;
-import FootStats.Parcelle;
-import FootStats.StatsTemps;
-import FootStats.StatsTempsJoueur;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.AppState;
-import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetLocator;
-import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.asset.plugins.ZipLocator;
-import com.jme3.font.BitmapFont;
-import com.jme3.font.BitmapText;
-import com.jme3.font.plugins.BitmapFontLoader;
 import com.jme3.input.ChaseCamera;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Line;
 
+import footStats.JoueurStat;
+import footStats.NoPlayerException;
+import footStats.Parcelle;
+import footStats.StatsTemps;
+import footStats.StatsTempsJoueur;
+
 public class SoccerApplication extends SimpleApplication
 {	
 	StatsTemps displaying;
 	Node field_node;
-	ArrayList<VisuJoueurs> joueurs;
+	ArrayList<VisuJoueur> joueurs;
 	Spatial player_geom;
 	ChaseCamera chaseCam;
 	
 	@Override
 	public void simpleInitApp() 
 	{
-		joueurs = new ArrayList<VisuJoueurs>();
+		joueurs = new ArrayList<VisuJoueur>();
 		
 		assetManager.registerLocator("stade.zip", ZipLocator.class);		
 		Spatial field_geom = assetManager.loadModel("stade/soccer.obj");
@@ -116,13 +108,22 @@ public class SoccerApplication extends SimpleApplication
 		field_node.attachChild(LinesNode);
 	}
 	
+	public void createJoueurs(ArrayList<JoueurStat> liste) 
+	{
+		for(JoueurStat j : liste)
+		{
+			VisuJoueur v = new VisuJoueur(j.getID(), player_geom, guiFont);
+			joueurs.add(v);
+		}
+	}
+	
 	@Override
 	public void simpleUpdate(float tpf)
 	{
 		if(displaying != null)
 		{
-			VisuJoueurs v;
-			for(VisuJoueurs vJ : joueurs)
+			VisuJoueur v;
+			for(VisuJoueur vJ : joueurs)
 			{
 				field_node.detachChild(vJ.player_geom);
 				field_node.detachChild(vJ.txt);
@@ -132,23 +133,19 @@ public class SoccerApplication extends SimpleApplication
 				try 
 				{
 					v = getPlayer(j.tag_id);
+					if(v.toDisplay)
+					{
+						field_node.attachChild(v.player_geom);
+						field_node.attachChild(v.txt);
+						v.player_geom.rotate(0, (float) (j.angleVue-v.angleAct), 0);
+						v.angleAct = (float) j.angleVue;
+						v.player_geom.setLocalTranslation(-Parcelle.LONGUEUR/2+j.pos_x, 0, -Parcelle.LARGEUR/2+j.pos_y); //
+						v.txt.setLocalTranslation(-Parcelle.LONGUEUR/2+j.pos_x, v.txt.getLineHeight()+0.5f, -Parcelle.LARGEUR/2+j.pos_y);
+						v.txt.lookAt(getCameraPos(), new Vector3f(0,1,0));
+					}
 				} 
 				catch (NoPlayerException e) 
 				{
-					v = new VisuJoueurs(j.tag_id, player_geom, guiFont);
-					joueurs.add(v);
-				}
-				if(v.toDisplay)
-				{
-					field_node.attachChild(v.player_geom);
-					field_node.attachChild(v.txt);
-					v.player_geom.center();
-					v.txt.center();
-					v.player_geom.rotate(0, ((j.direction+180)-v.angleAct), 0);
-					v.angleAct = j.direction+180;
-					v.player_geom.setLocalTranslation(-Parcelle.longueur/2+j.pos_x, 0, -Parcelle.largeur/2+j.pos_y); //
-					v.txt.setLocalTranslation(-Parcelle.longueur/2+j.pos_x, v.txt.getLineHeight()+0.5f, -Parcelle.largeur/2+j.pos_y);
-					v.txt.lookAt(getCameraPos(), new Vector3f(0,1,0));
 				}
 			}
 		}
@@ -163,9 +160,9 @@ public class SoccerApplication extends SimpleApplication
 		return pos;
 	}
 	
-	public VisuJoueurs getPlayer(int playerID) throws NoPlayerException
+	public VisuJoueur getPlayer(int playerID) throws NoPlayerException
 	{
-		for(VisuJoueurs j : joueurs)
+		for(VisuJoueur j : joueurs)
 		{
 			if(j.tag_id == playerID)
 			{

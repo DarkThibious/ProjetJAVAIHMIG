@@ -1,4 +1,4 @@
-package FootStats;
+package footStats;
 
 public class JoueurStat 
 {
@@ -8,11 +8,11 @@ public class JoueurStat
 	public JoueurStat(int id)
 	{
 		this.idJoueur = id;
-		this.parcelles = new Parcelle[Parcelle.longueur][Parcelle.largeur];
+		this.parcelles = new Parcelle[Parcelle.LONGUEUR][Parcelle.LARGEUR];
 		int i, j;
-		for(i=0;i<Parcelle.longueur;i++)
+		for(i=0;i<Parcelle.LONGUEUR;i++)
 		{
-			for(j=0;j<Parcelle.largeur;j++)
+			for(j=0;j<Parcelle.LARGEUR;j++)
 			{
 				parcelles[i][j] = new Parcelle(i, j);
 			}

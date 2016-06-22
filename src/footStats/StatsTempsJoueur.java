@@ -1,4 +1,4 @@
-package FootStats;
+package footStats;
 
 import java.util.Date;
 
