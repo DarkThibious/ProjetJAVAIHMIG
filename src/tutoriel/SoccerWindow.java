@@ -1,6 +1,7 @@
 package tutoriel;
 
 import FootStats.DataManager;
+import FootStats.JoueurStat;
 import FootStats.NoPlayerException;
 import FootStats.StatsTemps;
 import FootStats.StatsTempsJoueur;
@@ -33,11 +34,11 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class WindowedTest 
+public class SoccerWindow 
 {	
 	private static DataManager data;
 	private static int i = 0;
-	private static PlayGroundTest canvasApplication;
+	private static SoccerApplication canvasApplication;
 	private static Timer time;
 	
 	private static Canvas canvas; // JAVA Swing Canvas
@@ -71,11 +72,10 @@ public class WindowedTest
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(i < data.listeTemps.size())
+				if(i < data.getRecordTNumber())
 				{
-					System.out.println("Increment");
 					StatsTemps t = data.getEnregT(i);
-					update(t);
+			//		update(t);
 					canvasApplication.displaying = t;
 					i++;
 					timebar.setValue(i);
@@ -89,6 +89,7 @@ public class WindowedTest
 		
 		//Main Frame
 		frame = new JFrame("Java - Graphique - IHM");
+		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.addWindowListener(new WindowListener()
 		{
@@ -229,6 +230,7 @@ public class WindowedTest
      	itemOuvrir5.addActionListener(menuListener);
      	
      	//Left Panel
+     	
      	JPanel westPanel = new JPanel(); 
      	westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
      	westPanel.add(new JLabel("Joueurs"));
@@ -269,9 +271,18 @@ public class WindowedTest
 		frame.setVisible(true);
 		
 		chargementFichier(0);
+		
+		for(JoueurStat j : data.getListeJoueur())
+		{
+			JCheckBox c = new JCheckBox(Integer.toString(j.getID()));
+			c.setSelected(true);
+			players.add(c);
+			c.setVisible(true);
+			playerChoicePanel.add(c);
+		}
 	}
 	
-	public static void update(StatsTemps t)
+	/*public static void update(StatsTemps t)
 	{
 		boolean exist;
 		
@@ -305,11 +316,12 @@ public class WindowedTest
 				e.printStackTrace();
 			} catch (NoPlayerException e) 
 			{
+				System.err.println("No player with that id : "+ cbx.getText());
 			}
 		}
 		//frame.pack();
 		playerChoicePanel.setSize(playerChoicePanel.getPreferredSize());
-	}
+	}*/
 	
 	public static void chargementFichier(int index)
 	{
@@ -331,12 +343,11 @@ public class WindowedTest
 	{
 		// create new JME appsettings
 		AppSettings settings = new AppSettings(true);
-		settings.setResolution(1280, 800);
+		settings.setResolution(1280, 600);
 		settings.setSamples(8);
-		canvasApplication = new PlayGroundTest();
+		canvasApplication = new SoccerApplication();
 		canvasApplication.setSettings(settings);
 		canvasApplication.setShowSettings(false);
-		//app.start();
 		canvasApplication.createCanvas();
 		settings.setFrameRate(60);
 		settings.setVSync(true);
@@ -352,5 +363,4 @@ public class WindowedTest
 		createNewJFrame();
 		canvasApplication.setPauseOnLostFocus(false);
 	}
-
 }

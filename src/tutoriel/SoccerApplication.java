@@ -29,7 +29,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Line;
 
-public class PlayGroundTest extends SimpleApplication
+public class SoccerApplication extends SimpleApplication
 {	
 	StatsTemps displaying;
 	Node field_node;

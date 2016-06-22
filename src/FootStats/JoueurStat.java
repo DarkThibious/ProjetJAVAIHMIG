@@ -2,8 +2,8 @@ package FootStats;
 
 public class JoueurStat 
 {
-	int idJoueur;
-	Parcelle[][] parcelles;
+	private int idJoueur;
+	private Parcelle[][] parcelles;
 	
 	public JoueurStat(int id)
 	{
@@ -22,6 +22,16 @@ public class JoueurStat
 	public void passage(int x, int y)
 	{
 		parcelles[x][y].nbPassages++;
+	}
+	
+	public int getID()
+	{
+		return idJoueur;
+	}
+	
+	public int getPassage(int x, int y)
+	{
+		return parcelles[x][y].nbPassages;
 	}
 	
 }

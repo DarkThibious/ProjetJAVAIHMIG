@@ -14,8 +14,8 @@ import java.util.Date;
 public class DataManager 
 {
 	static String[] cheminsFichiers = {"res/2013-11-03_tromso_stromsgodset_first.csv", "res/2013-11-03_tromso_stromsgodset_second.csv", "res/2013-11-07_tromso_anji_first.csv", "res/2013-11-07_tromso_anji_second.csv"};
-	ArrayList<JoueurStat> listeJoueurs;
-	public ArrayList<StatsTemps> listeTemps;
+	private ArrayList<JoueurStat> listeJoueurs;
+	private ArrayList<StatsTemps> listeTemps;
 	
 	public DataManager()
 	{
@@ -55,6 +55,11 @@ public class DataManager
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public ArrayList<JoueurStat> getListeJoueur()
+	{
+		return (ArrayList<JoueurStat>) listeJoueurs.clone();
 	}
 	
 	public StatsTempsJoueur getEnreg(int index) throws ArrayIndexOutOfBoundsException
@@ -106,7 +111,7 @@ public class DataManager
 		{
 			for(JoueurStat j : this.listeJoueurs)
 			{
-				if(j.idJoueur == stat.tag_id)
+				if(j.getID() == stat.tag_id)
 				{
 					j.passage((int)stat.pos_x, (int)stat.pos_y);
 					return;
@@ -172,7 +177,7 @@ public class DataManager
 	{
 		for(JoueurStat j : this.listeJoueurs)
 		{
-			if(j.idJoueur == playerID)
+			if(j.getID() == playerID)
 			{
 				return j;
 			}

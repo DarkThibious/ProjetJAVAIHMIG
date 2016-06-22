@@ -59,7 +59,7 @@ public class SimpleTest {
 			{
 				for(int y=0;y < Parcelle.largeur;y++)
 				{
-					if(j.parcelles[x][y].nbPassages > 314)
+					if(j.getPassage(x, y) > 314)
 					{
 						good = false;
 					}
@@ -78,7 +78,7 @@ public class SimpleTest {
 	{
 		//vérifier que le joueur #14 n'a jamais été dans le coin de corner le plus proche de l'origine du repère des enregistrements
 		try {
-			assertEquals(0, myDataManager.getJStatsTot(14).parcelles[0][0].nbPassages);
+			assertEquals(0, myDataManager.getJStatsTot(14).getPassage(0, 0));
 		} catch (NoPlayerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
