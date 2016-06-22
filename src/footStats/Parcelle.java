@@ -4,7 +4,7 @@ public class Parcelle
 {
 	public static final int LARGEUR = 68;
 	public static final int LONGUEUR = 105;
-	int x, y, nbPassages;
+	public int x, y, nbPassages;
 	
 	public Parcelle(int x, int y)
 	{

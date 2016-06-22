@@ -1,6 +1,9 @@
 package affichage;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+
+import javax.vecmath.Point2f;
 
 
 import com.jme3.app.SimpleApplication;
@@ -13,6 +16,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 
 import footStats.JoueurStat;
@@ -23,11 +27,15 @@ import footStats.StatsTempsJoueur;
 
 public class SoccerApplication extends SimpleApplication
 {	
-	StatsTemps displaying;
-	Node field_node;
-	ArrayList<VisuJoueur> joueurs;
-	Spatial player_geom;
-	ChaseCamera chaseCam;
+	protected StatsTemps displaying;
+	private Node field_node;
+	private ArrayList<VisuJoueur> joueurs;
+	private Spatial player_geom;
+	private Spatial field_geom;
+	private ChaseCamera chaseCam;
+	protected boolean drawTraject = false;
+	protected int nbPoints = 1000;
+	protected JoueurStat heatMapPlayer = null;
 	
 	@Override
 	public void simpleInitApp() 
@@ -35,7 +43,7 @@ public class SoccerApplication extends SimpleApplication
 		joueurs = new ArrayList<VisuJoueur>();
 		
 		assetManager.registerLocator("stade.zip", ZipLocator.class);		
-		Spatial field_geom = assetManager.loadModel("stade/soccer.obj");
+		field_geom = assetManager.loadModel("stade/soccer.obj");
 		player_geom = assetManager.loadModel("stade/player.obj");
 		field_node= new Node("field");
 		field_node.attachChild(field_geom);
@@ -120,14 +128,35 @@ public class SoccerApplication extends SimpleApplication
 	@Override
 	public void simpleUpdate(float tpf)
 	{
+		drawPlayers();
+		drawHeatMap();
+	}
+	
+	public void drawHeatMap()
+	{
+		if(heatMapPlayer != null)
+		{
+			Box b = new Box(1,1,1);
+			for(Parcelle[] p1 : heatMapPlayer.parcelles)
+			{
+				for(Parcelle p : p1)
+				{
+					Geometry geom = new Geometry("Box", b);
+					Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+					geom.setMaterial(mat);
+					geom = (Geometry) geom.scale(0, p.nbPassages, 0);
+				}
+			}
+		}
+	}
+	
+	public void drawPlayers()
+	{
 		if(displaying != null)
 		{
 			VisuJoueur v;
-			for(VisuJoueur vJ : joueurs)
-			{
-				field_node.detachChild(vJ.player_geom);
-				field_node.detachChild(vJ.txt);
-			}	
+			field_node.detachAllChildren();
+			field_node.attachChild(field_geom);
 			for(StatsTempsJoueur j : displaying.listeStatsTJ)
 			{
 				try 
@@ -135,6 +164,36 @@ public class SoccerApplication extends SimpleApplication
 					v = getPlayer(j.tag_id);
 					if(v.toDisplay)
 					{
+						if(drawTraject)
+						{
+							Vector3f newPos = new Vector3f(-Parcelle.LONGUEUR/2+j.pos_x,0,-Parcelle.LARGEUR/2+j.pos_y);
+							if(v.prevPos != null)
+							{
+								Node lineNode = new Node();
+								Line line = new Line(v.prevPos, newPos);
+								Geometry line_geom = new Geometry("line", line);
+								Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+								mat.setColor("Color", new ColorRGBA(0.2f*j.vitesse, 0, 1.0f-0.2f*j.vitesse, 126));
+								System.out.println(j.vitesse);
+								line_geom.setMaterial(mat);
+								lineNode.attachChild(line_geom);
+								v.traject.add(lineNode);
+								while(v.traject.size() > nbPoints/2)
+								{
+									v.traject.remove();
+								}
+								for(Node l : v.traject)
+								{
+									field_node.attachChild(l);
+								}
+							}
+							v.prevPos = newPos.clone();
+						}
+						else
+						{
+							v.prevPos = null;
+							v.traject.clear();
+						}
 						field_node.attachChild(v.player_geom);
 						field_node.attachChild(v.txt);
 						v.player_geom.rotate(0, (float) (j.angleVue-v.angleAct), 0);
@@ -143,10 +202,13 @@ public class SoccerApplication extends SimpleApplication
 						v.txt.setLocalTranslation(-Parcelle.LONGUEUR/2+j.pos_x, v.txt.getLineHeight()+0.5f, -Parcelle.LARGEUR/2+j.pos_y);
 						v.txt.lookAt(getCameraPos(), new Vector3f(0,1,0));
 					}
-				} 
-				catch (NoPlayerException e) 
-				{
+					else
+					{
+						v.prevPos = null;
+						v.traject.clear();
+					}
 				}
+				catch (NoPlayerException e) {}
 			}
 		}
 	}

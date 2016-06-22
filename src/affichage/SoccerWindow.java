@@ -44,6 +44,7 @@ public class SoccerWindow
 	private static JButton play;
 	private static JPanel lecturePanel;
 	private static JLabel timeLbl;
+	private static JSpinner nbPoints;
 	private static JPanel playerChoicePanel;
 	private static ArrayList<JCheckBox> players; 
 	private static JSlider timebar;
@@ -228,7 +229,33 @@ public class SoccerWindow
      	playerChoicePanel = new JPanel(new GridLayout(10, 2));
 		
 		westPanel.add(playerChoicePanel, BorderLayout.CENTER);
+		JPanel trajectPanel = new JPanel();
+		trajectPanel.setLayout(new BoxLayout(trajectPanel, BoxLayout.Y_AXIS));
+		JCheckBox ligne = new JCheckBox("Afficher les lignes", false);
+		ligne.addActionListener(new ActionListener() 
+		{	
+			@Override
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				canvasApplication.drawTraject = ((JCheckBox) arg0.getSource()).isSelected();
+			}
+		});
+		trajectPanel.add(ligne);
+		JLabel lbl = new JLabel("Nombre de Points");
+		trajectPanel.add(lbl);
+		nbPoints = new JSpinner(new SpinnerNumberModel(1000, 0, 5000, 10));
+		nbPoints.addChangeListener(new ChangeListener() 
+		{	
+			@Override
+			public void stateChanged(ChangeEvent arg0) 
+			{
+				SpinnerNumberModel model = (SpinnerNumberModel) nbPoints.getModel();
+				canvasApplication.nbPoints = model.getNumber().intValue();
+			}
+		});
+		trajectPanel.add(nbPoints);
 		
+		westPanel.add(trajectPanel, BorderLayout.SOUTH);
 		//Central Panel
 		panel = new JPanel(new BorderLayout());
 		panel.add(westPanel, BorderLayout.WEST);

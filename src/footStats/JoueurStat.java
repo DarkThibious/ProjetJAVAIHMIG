@@ -3,7 +3,7 @@ package footStats;
 public class JoueurStat 
 {
 	private int idJoueur;
-	private Parcelle[][] parcelles;
+	public Parcelle[][] parcelles;
 	
 	public JoueurStat(int id)
 	{
