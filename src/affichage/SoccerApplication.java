@@ -36,6 +36,7 @@ public class SoccerApplication extends SimpleApplication
 	protected boolean drawTraject = false;
 	protected int nbPoints = 1000;
 	protected JoueurStat heatMapPlayer = null;
+	protected boolean relief = true;
 	
 	@Override
 	public void simpleInitApp() 
@@ -129,27 +130,42 @@ public class SoccerApplication extends SimpleApplication
 	public void simpleUpdate(float tpf)
 	{
 		drawPlayers();
-		drawHeatMap();
+		if(heatMapPlayer != null)
+		{
+			drawHeatMap();
+		}
 	}
 	
 	public void drawHeatMap()
 	{
-		if(heatMapPlayer != null)
+		Box b = new Box(0.5f,0.5f,0.5f);
+		for(Parcelle[] p1 : heatMapPlayer.parcelles)
 		{
-			Box b = new Box(1,1,1);
-			for(Parcelle[] p1 : heatMapPlayer.parcelles)
+			for(Parcelle p : p1)
 			{
-				for(Parcelle p : p1)
+				if(p.nbPassages != 0)
 				{
 					Geometry geom = new Geometry("Box", b);
 					Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+					mat.setColor("Color", new ColorRGBA(0.005f*p.nbPassages, 0, 1.0f-0.005f*p.nbPassages, 0.5f));
 					geom.setMaterial(mat);
-					geom = (Geometry) geom.scale(0, p.nbPassages, 0);
+					if(relief)
+					{
+						geom = (Geometry) geom.scale(1, p.nbPassages/50, 1);
+						geom.setLocalTranslation(-Parcelle.LONGUEUR/2 + p.x, p.nbPassages/50*0.5f, -Parcelle.LARGEUR/2 + p.y);
+					}
+					else
+					{
+						geom = (Geometry) geom.scale(1, 0.001f, 1);
+						geom.setLocalTranslation(-Parcelle.LONGUEUR/2 + p.x, 0, -Parcelle.LARGEUR/2 + p.y);
+					}
+					field_node.attachChild(geom);
 				}
+
 			}
 		}
 	}
-	
+
 	public void drawPlayers()
 	{
 		if(displaying != null)
@@ -173,7 +189,7 @@ public class SoccerApplication extends SimpleApplication
 								Line line = new Line(v.prevPos, newPos);
 								Geometry line_geom = new Geometry("line", line);
 								Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-								mat.setColor("Color", new ColorRGBA(0.2f*j.vitesse, 0, 1.0f-0.2f*j.vitesse, 126));
+								mat.setColor("Color", new ColorRGBA(0.2f*j.vitesse, 0, 1.0f-0.2f*j.vitesse, 0.5f));
 								System.out.println(j.vitesse);
 								line_geom.setMaterial(mat);
 								lineNode.attachChild(line_geom);
@@ -198,7 +214,7 @@ public class SoccerApplication extends SimpleApplication
 						field_node.attachChild(v.txt);
 						v.player_geom.rotate(0, (float) (j.angleVue-v.angleAct), 0);
 						v.angleAct = (float) j.angleVue;
-						v.player_geom.setLocalTranslation(-Parcelle.LONGUEUR/2+j.pos_x, 0, -Parcelle.LARGEUR/2+j.pos_y); //
+						v.player_geom.setLocalTranslation(-Parcelle.LONGUEUR/2+j.pos_x, 0, -Parcelle.LARGEUR/2+j.pos_y); 
 						v.txt.setLocalTranslation(-Parcelle.LONGUEUR/2+j.pos_x, v.txt.getLineHeight()+0.5f, -Parcelle.LARGEUR/2+j.pos_y);
 						v.txt.lookAt(getCameraPos(), new Vector3f(0,1,0));
 					}
