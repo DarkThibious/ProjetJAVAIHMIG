@@ -23,11 +23,17 @@ public class VisuJoueur
 	public VisuJoueur(int tag_id, Spatial geom, BitmapFont guiFont)
 	{
 		this.tag_id = tag_id;
-		player_geom = geom.clone();
+		setGeom(geom);
 		txt = new BitmapText(guiFont, false);
 		txt.setSize(guiFont.getCharSet().getRenderedSize()/10);
 		txt.setText(Integer.toString(tag_id));
 		traject = new LinkedList<Node>();
 		prevPos = null;
+	}
+	
+	public void setGeom(Spatial geom)
+	{
+		player_geom = geom.clone();
+		player_geom.rotate(0, 180, 0);
 	}
 }

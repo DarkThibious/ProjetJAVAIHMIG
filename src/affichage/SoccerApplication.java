@@ -27,6 +27,7 @@ public class SoccerApplication extends SimpleApplication
 	private Node field_node;
 	private ArrayList<VisuJoueur> joueurs;
 	private Spatial player_geom;
+	private Spatial selected_player_geom;
 	private Spatial field_geom;
 	private ChaseCamera chaseCam;
 	protected boolean drawTraject = false;
@@ -42,6 +43,7 @@ public class SoccerApplication extends SimpleApplication
 		assetManager.registerLocator("stade.zip", ZipLocator.class);		
 		field_geom = assetManager.loadModel("stade/soccer.obj");
 		player_geom = assetManager.loadModel("stade/player.obj");
+		selected_player_geom = assetManager.loadModel("stade/sPlayer.obj");
 		field_node= new Node("field");
 		field_node.attachChild(field_geom);
 		rootNode.attachChild(field_node);
@@ -126,9 +128,19 @@ public class SoccerApplication extends SimpleApplication
 	public void simpleUpdate(float tpf)
 	{
 		drawPlayers();
+		for(VisuJoueur v : joueurs)
+		{
+			v.setGeom(player_geom);
+		}
 		if(heatMapPlayer != null)
 		{
 			drawHeatMap();
+			try {
+				getPlayer(heatMapPlayer.getID()).setGeom(selected_player_geom);
+			} catch (NoPlayerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
