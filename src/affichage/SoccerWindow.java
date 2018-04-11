@@ -191,7 +191,7 @@ public class SoccerWindow
 				final JPanel pane = new JPanel();
 				pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
 
-				JTextArea cautionText = new JTextArea("Add some text here to describe the controls \n" + '\n');
+				JTextArea cautionText = new JTextArea("Right click on a player to select him, or use the combo box on the right.\nYou can right click on an empty space in the 3D view to unselect.\n");
 				cautionText.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 				cautionText.setEditable(false);
 				pane.add(cautionText);
@@ -269,7 +269,7 @@ public class SoccerWindow
 		westPanel.add(playerChoicePanel, BorderLayout.CENTER);
 		JPanel trajectPanel = new JPanel();
 		trajectPanel.setLayout(new BoxLayout(trajectPanel, BoxLayout.Y_AXIS));
-		JCheckBox ligne = new JCheckBox("Afficher les trajectoires", false);
+		JCheckBox ligne = new JCheckBox("Display path", false);
 		ligne.addActionListener(new ActionListener() 
 		{	
 			@Override
@@ -279,7 +279,7 @@ public class SoccerWindow
 			}
 		});
 		trajectPanel.add(ligne);
-		JLabel lbl = new JLabel("Nombre de Points");
+		JLabel lbl = new JLabel("Points Number");
 		trajectPanel.add(lbl);
 		nbPoints = new JSpinner(new SpinnerNumberModel(1000, 0, 5000, 10));
 		nbPoints.addChangeListener(new ChangeListener() 
@@ -312,7 +312,7 @@ public class SoccerWindow
 			{
 				i = 0;
 				time.getActionListeners()[0].actionPerformed(null);
-				play.setText("Lecture");
+				play.setText("Play");
 				time.stop();
 			}
 		});
@@ -324,7 +324,7 @@ public class SoccerWindow
 			public void actionPerformed(ActionEvent arg0) 
 			{
 				JButton b = (JButton) (arg0.getSource());
-				if(b.getText().equals("Lecture"))
+				if(b.getText().equals("Play"))
 				{
 					time.start();
 					b.setText("Pause");
@@ -332,7 +332,7 @@ public class SoccerWindow
 				else
 				{
 					time.stop();
-					b.setText("Lecture");
+					b.setText("Play");
 				}
 			}
 		});
