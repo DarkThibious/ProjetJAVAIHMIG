@@ -33,7 +33,8 @@ public class SoccerApplication extends SimpleApplication
 	protected boolean drawTraject = false;
 	protected int nbPoints = 1000;
 	protected JoueurStat heatMapPlayer = null;
-	protected boolean relief = true;
+	protected boolean relief  = true;
+	protected boolean heatMap = true;
 	
 	@Override
 	public void simpleInitApp() 
@@ -134,13 +135,14 @@ public class SoccerApplication extends SimpleApplication
 		}
 		if(heatMapPlayer != null)
 		{
-			drawHeatMap();
-			try {
-				getPlayer(heatMapPlayer.getID()).setGeom(selected_player_geom);
-			} catch (NoPlayerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(heatMap)
+			{
+				drawHeatMap();
 			}
+			try 
+			{
+				getPlayer(heatMapPlayer.getID()).setGeom(selected_player_geom);
+			} catch (NoPlayerException e) {}
 		}
 	}
 	

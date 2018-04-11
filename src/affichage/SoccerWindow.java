@@ -431,6 +431,20 @@ public class SoccerWindow
 				canvasApplication.relief = ((JCheckBox) arg0.getSource()).isSelected();
 			}
 		});
+		
+		JCheckBox choixHeatMap = new JCheckBox("HeatMap");
+		choixHeatMap.setSelected(true);
+		choixHeatMap.addItemListener(new ItemListener() 
+		{	
+			@Override
+			public void itemStateChanged(ItemEvent arg0) 
+			{
+				canvasApplication.heatMap = ((JCheckBox) arg0.getSource()).isSelected();
+			}
+		});
+		
+		
+		heatMapPanel.add(choixHeatMap);
 		heatMapPanel.add(choixRelief);
 		playerPanel.add(heatMapPanel, BorderLayout.NORTH);
 		
