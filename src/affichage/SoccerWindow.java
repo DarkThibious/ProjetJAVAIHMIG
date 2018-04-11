@@ -51,7 +51,53 @@ public class SoccerWindow
 	private static boolean loaded;
 	
 	private static JLabel tag_id, pos_x, pos_y, angleVue, direction, energie, vitesse, distanceParcourue;
-
+	
+	private static void updateDisplay() {
+		if(i < data.getRecordTNumber())
+		{
+			StatsTemps t = data.getEnregT(i);
+			canvasApplication.displaying = t;
+			timeLbl.setText(t.temps.toString());
+			timebar.setValue(i);
+			if(listeJoueurs.getSelectedIndex() != -1 && listeJoueurs.getSelectedIndex() != 0)
+			{
+				StatsTempsJoueur j;
+				try {
+					DecimalFormat df = new DecimalFormat("00.000");
+					j = t.getJoueurEnreg((int) listeJoueurs.getSelectedItem());
+					tag_id.setText("ID : " + Integer.toString(j.tag_id));
+					pos_x.setText("x = " + df.format(j.pos_x));
+					pos_y.setText("y = " + df.format(j.pos_y));
+					angleVue.setText("Regard = " + df.format(j.angleVue));
+					direction.setText("Direction = " + df.format(j.direction)); 
+					energie.setText("Energie = " + df.format(j.energie));
+					vitesse.setText("Vitesse = " + df.format(j.vitesse));
+					distanceParcourue.setText("Distance = " + df.format(j.distanceParcourue));
+				} catch (NoPlayerException e1) {
+					tag_id.setText("ID : "+(int) listeJoueurs.getSelectedItem());
+					pos_x.setText("x = ---,---");
+					pos_y.setText("y = ---,---");
+					angleVue.setText("Regard = ---,---");
+					direction.setText("Direction = ---,---"); 
+					energie.setText("Energie = ---,---");
+					vitesse.setText("Vitesse = ---,---");
+					distanceParcourue.setText("Distance = ---,---");
+				}
+			}
+			else
+			{
+				tag_id.setText("ID : --");
+				pos_x.setText("x = ---,---");
+				pos_y.setText("y = ---,---");
+				angleVue.setText("Regard = ---,---");
+				direction.setText("Direction = ---,---"); 
+				energie.setText("Energie = ---,---");
+				vitesse.setText("Vitesse = ---,---");
+				distanceParcourue.setText("Distance = ---,---");
+			}
+		}
+	}
+		
 	private static void createNewJFrame() 
 	{	
 		//Dialog Loading
@@ -70,50 +116,8 @@ public class SoccerWindow
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(i < data.getRecordTNumber())
-				{
-					StatsTemps t = data.getEnregT(i);
-					canvasApplication.displaying = t;
-					i++;
-					timeLbl.setText(t.temps.toString());
-					timebar.setValue(i);
-					if(listeJoueurs.getSelectedIndex() != -1 && listeJoueurs.getSelectedIndex() != 0)
-					{
-						StatsTempsJoueur j;
-						try {
-							DecimalFormat df = new DecimalFormat("00.000");
-							j = t.getJoueurEnreg((int) listeJoueurs.getSelectedItem());
-							tag_id.setText("ID : " + Integer.toString(j.tag_id));
-							pos_x.setText("x = " + df.format(j.pos_x));
-							pos_y.setText("y = " + df.format(j.pos_y));
-							angleVue.setText("Regard = " + df.format(j.angleVue));
-							direction.setText("Direction = " + df.format(j.direction)); 
-							energie.setText("Energie = " + df.format(j.energie));
-							vitesse.setText("Vitesse = " + df.format(j.vitesse));
-							distanceParcourue.setText("Distance = " + df.format(j.distanceParcourue));
-						} catch (NoPlayerException e1) {
-							tag_id.setText("ID : "+(int) listeJoueurs.getSelectedItem());
-							pos_x.setText("x = ---,---");
-							pos_y.setText("y = ---,---");
-							angleVue.setText("Regard = ---,---");
-							direction.setText("Direction = ---,---"); 
-							energie.setText("Energie = ---,---");
-							vitesse.setText("Vitesse = ---,---");
-							distanceParcourue.setText("Distance = ---,---");
-						}
-					}
-					else
-					{
-						tag_id.setText("ID : --");
-						pos_x.setText("x = ---,---");
-						pos_y.setText("y = ---,---");
-						angleVue.setText("Regard = ---,---");
-						direction.setText("Direction = ---,---"); 
-						energie.setText("Energie = ---,---");
-						vitesse.setText("Vitesse = ---,---");
-						distanceParcourue.setText("Distance = ---,---");
-					}
-				}
+				updateDisplay();
+				i++;
 			}
 		});
 
@@ -343,7 +347,7 @@ public class SoccerWindow
 			public void stateChanged(ChangeEvent e) 
 			{
 				i = ((JSlider) e.getSource()).getValue();
-
+				updateDisplay();
 			}
 		});
 		lecturePanel.add(timebar);
