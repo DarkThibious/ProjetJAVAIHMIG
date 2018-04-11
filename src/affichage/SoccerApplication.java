@@ -1,10 +1,6 @@
 package affichage;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-
-import javax.vecmath.Point2f;
-
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.ZipLocator;

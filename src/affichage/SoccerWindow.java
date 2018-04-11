@@ -1,6 +1,5 @@
 package affichage;
 
-
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 
@@ -9,7 +8,6 @@ import footStats.JoueurStat;
 import footStats.NoPlayerException;
 import footStats.StatsTemps;
 import footStats.StatsTempsJoueur;
-
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -22,11 +20,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.Date;
+import java.text.DecimalFormat;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -54,7 +50,7 @@ public class SoccerWindow
 	private static int delay = 50;
 	private static boolean loaded;
 	
-	private static JLabel temps, tag_id, pos_x, pos_y, angleVue, direction, energie, vitesse, distanceParcourue;
+	private static JLabel tag_id, pos_x, pos_y, angleVue, direction, energie, vitesse, distanceParcourue;
 
 	private static void createNewJFrame() 
 	{	
@@ -81,39 +77,42 @@ public class SoccerWindow
 					i++;
 					timeLbl.setText(t.temps.toString());
 					timebar.setValue(i);
-					if(listeJoueurs.getSelectedIndex() != -1)
+					if(listeJoueurs.getSelectedIndex() != -1 && listeJoueurs.getSelectedIndex() != 0)
 					{
 						StatsTempsJoueur j;
 						try {
+							DecimalFormat df = new DecimalFormat("00.000");
 							j = t.getJoueurEnreg((int) listeJoueurs.getSelectedItem());
 							tag_id.setText("ID : " + Integer.toString(j.tag_id));
-							pos_x.setText("x = " + Float.toString(j.pos_x));
-							pos_y.setText("y = " + Float.toString(j.pos_y));
-							angleVue.setText("Regard = " + Float.toString(j.angleVue));
-							direction.setText("Direction = " + Float.toString(j.direction)); 
-							energie.setText("Energie = " + Float.toString(j.energie));
-							vitesse.setText("Vitesse = " + Float.toString(j.vitesse));
-							distanceParcourue.setText("Distance = " + Float.toString(j.distanceParcourue));
+							pos_x.setText("x = " + df.format(j.pos_x));
+							pos_y.setText("y = " + df.format(j.pos_y));
+							angleVue.setText("Regard = " + df.format(j.angleVue));
+							direction.setText("Direction = " + df.format(j.direction)); 
+							energie.setText("Energie = " + df.format(j.energie));
+							vitesse.setText("Vitesse = " + df.format(j.vitesse));
+							distanceParcourue.setText("Distance = " + df.format(j.distanceParcourue));
 						} catch (NoPlayerException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							tag_id.setText("ID : "+(int) listeJoueurs.getSelectedItem());
+							pos_x.setText("x = ---,---");
+							pos_y.setText("y = ---,---");
+							angleVue.setText("Regard = ---,---");
+							direction.setText("Direction = ---,---"); 
+							energie.setText("Energie = ---,---");
+							vitesse.setText("Vitesse = ---,---");
+							distanceParcourue.setText("Distance = ---,---");
 						}
 					}
 					else
 					{
 						tag_id.setText("ID : --");
-						pos_x.setText("x = --");
-						pos_y.setText("y = --");
-						angleVue.setText("Regard = --");
-						direction.setText("Direction = --"); 
-						energie.setText("Energie = --");
-						vitesse.setText("Vitesse = --");
-						distanceParcourue.setText("Distance = --");
+						pos_x.setText("x = ---,---");
+						pos_y.setText("y = ---,---");
+						angleVue.setText("Regard = ---,---");
+						direction.setText("Direction = ---,---"); 
+						energie.setText("Energie = ---,---");
+						vitesse.setText("Vitesse = ---,---");
+						distanceParcourue.setText("Distance = ---,---");
 					}
-				}
-				if(i == 1)
-				{
-					//frame.pack();
 				}
 			}
 		});
@@ -336,7 +335,6 @@ public class SoccerWindow
 		});
 
 		lecturePanel.add(play);
-
 		timebar = new JSlider(0);
 		timebar.setValue(0);
 		timebar.addChangeListener(new ChangeListener() 
@@ -399,10 +397,17 @@ public class SoccerWindow
 				{
 					try 
 					{
-						canvasApplication.heatMapPlayer = data.getJStatsTot((int) listeJoueurs.getSelectedItem());
+						if(listeJoueurs.getSelectedIndex() != 0)
+						{
+							canvasApplication.heatMapPlayer = data.getJStatsTot((int) listeJoueurs.getSelectedItem());
+						}
+						else
+						{
+							canvasApplication.heatMapPlayer = null;
+						}
 					} catch (NoPlayerException e) 
 					{
-						e.printStackTrace();
+						canvasApplication.heatMapPlayer = null;
 					}
 				}
 			}
@@ -436,13 +441,13 @@ public class SoccerWindow
 		vitesse  = new JLabel(); 
 		distanceParcourue = new JLabel();
 		tag_id.setText("ID : --");
-		pos_x.setText("x = --");
-		pos_y.setText("y = --");
-		angleVue.setText("Regard = --");
-		direction.setText("Direction = --"); 
-		energie.setText("Energie = --");
-		vitesse.setText("Vitesse = --");
-		distanceParcourue.setText("Distance = --");
+		pos_x.setText("x = --,---");
+		pos_y.setText("y = --,---");
+		angleVue.setText("Regard = --,---");
+		direction.setText("Direction = --,---"); 
+		energie.setText("Energie = --,---");
+		vitesse.setText("Vitesse = --,---");
+		distanceParcourue.setText("Distance = --,---");
 		statsPanel.add(Box.createVerticalGlue());
 		statsPanel.add(tag_id);
 		statsPanel.add(pos_x);
@@ -455,8 +460,9 @@ public class SoccerWindow
 		statsPanel.add(Box.createVerticalGlue());
 		statsPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 		playerPanel.add(statsPanel, BorderLayout.CENTER);
+		playerPanel.setPreferredSize(new Dimension(150, 100));
 		frame.add(playerPanel, BorderLayout.EAST);
-
+		
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -506,6 +512,7 @@ public class SoccerWindow
 		listeJoueurs.removeAllItems();
 		int i = 1,nb = 0;
 		JoueurStat j;
+		listeJoueurs.addItem(0);
 		while(nb != data.getListeJoueur().size())
 		{
 			try 
@@ -551,9 +558,9 @@ public class SoccerWindow
 		canvas = ctx.getCanvas();
 		Dimension dim = new Dimension(settings.getWidth(), settings.getHeight());
 		canvas.setPreferredSize(dim);
-
 		// Create the JFrame with the Canvas on the middle
 		createNewJFrame();
+		
 		canvasApplication.setPauseOnLostFocus(false);
 	}
 }
