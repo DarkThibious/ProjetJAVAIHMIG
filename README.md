@@ -2,7 +2,7 @@
 
 (English version below)
 
-###Réalisé dans le cadre de la formation d'ingénieur en informatique, à Polytech Paris-Sud
+##Réalisé dans le cadre de la formation d'ingénieur en informatique, à Polytech Paris-Sud
 Par Thibault Lasou et Yasmine Kertous.
 Ce projet vise à visualiser des données collectées sur des joueurs de football au cours d'un match. 
 Le logiciel affiche ainsi une vue des joueurs sur le terrain au cours du match, ainsi que leur trajectoires.
@@ -12,6 +12,7 @@ Il permet également de sélectionner un joueur particulier, et d'afficher certain
 * Vitesse du déplacement
 * Energie dépensée
 * ...
+
 On peut également afficher une heatmap des positions du joueur au cours du match.
 
 
