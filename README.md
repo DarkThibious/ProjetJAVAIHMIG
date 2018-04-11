@@ -18,6 +18,6 @@ On peut également afficher une heatmap des positions du joueur au cours du matc
 
 ----------------
 ##Technologies
-*Le logiciel est codé en _Java_ (8).
-*L'interface utilisateur est réalisée avec _Swing_.
-*La vue 3D est réalisée avec _JMonkeyEngine 3_.
+* Le logiciel est codé en _Java_ (8).
+* L'interface utilisateur est réalisée avec _Swing_.
+* La vue 3D est réalisée avec _JMonkeyEngine 3_.
