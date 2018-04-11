@@ -128,21 +128,21 @@ public class SoccerApplication extends SimpleApplication
 	@Override
 	public void simpleUpdate(float tpf)
 	{
-		drawPlayers();
 		for(VisuJoueur v : joueurs)
 		{
 			v.setGeom(player_geom);
 		}
 		if(heatMapPlayer != null)
 		{
-			if(heatMap)
-			{
-				drawHeatMap();
-			}
 			try 
 			{
 				getPlayer(heatMapPlayer.getID()).setGeom(selected_player_geom);
 			} catch (NoPlayerException e) {}
+		}
+		drawPlayers();
+		if(heatMap && heatMapPlayer != null)
+		{
+			drawHeatMap();
 		}
 	}
 	
@@ -222,7 +222,7 @@ public class SoccerApplication extends SimpleApplication
 						}
 						field_node.attachChild(v.player_geom);
 						field_node.attachChild(v.txt);
-						v.player_geom.rotate(0, (float) (j.angleVue-v.angleAct), 0);
+						v.player_geom.rotate(0, (float) (j.angleVue), 0);//-v.angleAct), 0);
 						v.angleAct = (float) j.angleVue;
 						v.player_geom.setLocalTranslation(-Parcelle.LONGUEUR/2+j.pos_x, 0, -Parcelle.LARGEUR/2+j.pos_y); 
 						v.txt.setLocalTranslation(-Parcelle.LONGUEUR/2+j.pos_x, v.txt.getLineHeight()+0.5f, -Parcelle.LARGEUR/2+j.pos_y);

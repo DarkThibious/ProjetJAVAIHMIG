@@ -68,8 +68,8 @@ public class SoccerWindow
 					tag_id.setText("ID : " + Integer.toString(j.tag_id));
 					pos_x.setText("x = " + df.format(j.pos_x));
 					pos_y.setText("y = " + df.format(j.pos_y));
-					angleVue.setText("Regard = " + df.format(j.angleVue));
-					direction.setText("Direction = " + df.format(j.direction)); 
+					angleVue.setText("Regard = " + df.format(j.angleVue*180/Math.PI)+"°");
+					direction.setText("Direction = " + df.format(j.direction*180/Math.PI) + "°"); 
 					energie.setText("Energie = " + df.format(j.energie));
 					vitesse.setText("Vitesse = " + df.format(j.vitesse));
 					distanceParcourue.setText("Distance = " + df.format(j.distanceParcourue));
@@ -122,7 +122,7 @@ public class SoccerWindow
 		});
 
 		//Main Frame
-		frame = new JFrame("Java - Graphique - IHM");
+		frame = new JFrame("Football Data Viz");
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.addWindowListener(new WindowListener()
@@ -136,7 +136,6 @@ public class SoccerWindow
 			@Override
 			public void windowClosed(WindowEvent e) 
 			{
-				System.out.print("sdkjhfjsd");
 				time.stop();
 				canvasApplication.stop();
 				try 
@@ -385,7 +384,9 @@ public class SoccerWindow
 		lecturePanel.add(speed4);
 		lecturePanel.add(speed8);
 		lecturePanel.add(speed16);
-
+		
+		group.setSelected(speed.getModel(), true);
+		
 		frame.add(lecturePanel, BorderLayout.SOUTH);
 
 		JPanel playerPanel = new JPanel();
