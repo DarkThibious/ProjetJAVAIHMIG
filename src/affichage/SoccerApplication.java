@@ -4,10 +4,17 @@ import java.util.ArrayList;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.ZipLocator;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.ChaseCamera;
+import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -57,12 +64,14 @@ public class SoccerApplication extends SimpleApplication
 		flyCam.setEnabled(false);
 		chaseCam = new ChaseCamera(cam, field_node, inputManager);
 		chaseCam.setDragToRotate(true);
+		chaseCam.setToggleRotationTrigger(new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		chaseCam.setInvertVerticalAxis(true);
 		chaseCam.setRotationSpeed(10.0f);
 		chaseCam.setMinVerticalRotation(0.001f);//(float) - (Math.PI/2 - 0.0001f));
 		chaseCam.setMaxVerticalRotation((float) Math.PI/2);
 		chaseCam.setMinDistance(7.5f);
 		chaseCam.setMaxDistance(100.0f);
+		chaseCam.setHideCursorOnRotate(true);
 		
 		viewPort.setBackgroundColor(new ColorRGBA(0, 0, 0, 0));
 		
@@ -114,8 +123,46 @@ public class SoccerApplication extends SimpleApplication
 		lineGeo.setMaterial(mat);
 		LinesNode.attachChild(lineGeo);
 		field_node.attachChild(LinesNode);
+		
+		inputManager.addMapping("pick target", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addListener(selectListener, "pick target");
 	}
 	
+	private ActionListener selectListener = new ActionListener() {
+		@Override
+	    public void onAction(String name, boolean keyPressed, float tpf)
+	    {
+	      if (name.equals("pick target") && !keyPressed) {
+	        // Reset results list.
+	        CollisionResults results = new CollisionResults();
+	        // Convert screen click to 3d position
+	        Vector2f click2d = inputManager.getCursorPosition();
+	        Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+	        Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+	        // Aim the ray from the clicked spot forwards.
+	        Ray ray = new Ray(click3d, dir);
+	        // Collect intersections between ray and all nodes in results list.
+	        rootNode.collideWith(ray, results);
+	        // Use the results -- we rotate the selected geometry.
+	        if (results.size() > 0) 
+	        {
+	          // The closest result is the target that the player picked:
+	          Geometry target = results.getClosestCollision().getGeometry();
+	          // Here comes the action:
+	          for(VisuJoueur v : joueurs)
+	          {
+	        	  if(v.player_geom == target)
+	        	  {
+	        		  SoccerWindow.setSelectedPlayer(v.tag_id);
+	        		  return;
+	        	  }
+	          }
+	        }
+	        SoccerWindow.setSelectedPlayer(0);
+	      }
+	    }
+	  };
+	  
 	public void createJoueurs(ArrayList<JoueurStat> liste) 
 	{
 		for(JoueurStat j : liste)
@@ -128,21 +175,24 @@ public class SoccerApplication extends SimpleApplication
 	@Override
 	public void simpleUpdate(float tpf)
 	{
-		for(VisuJoueur v : joueurs)
+		if(SoccerWindow.isLoaded())
 		{
-			v.setGeom(player_geom);
-		}
-		if(heatMapPlayer != null)
-		{
-			try 
+			for(VisuJoueur v : joueurs)
 			{
-				getPlayer(heatMapPlayer.getID()).setGeom(selected_player_geom);
-			} catch (NoPlayerException e) {}
-		}
-		drawPlayers();
-		if(heatMap && heatMapPlayer != null)
-		{
-			drawHeatMap();
+				v.setGeom(player_geom);
+			}
+			if(heatMapPlayer != null)
+			{
+				try 
+				{
+					getPlayer(heatMapPlayer.getID()).setGeom(selected_player_geom);
+				} catch (NoPlayerException e) {}
+			}
+			drawPlayers();
+			if(heatMap && heatMapPlayer != null)
+			{
+				drawHeatMap();
+			}
 		}
 	}
 	
@@ -157,7 +207,7 @@ public class SoccerApplication extends SimpleApplication
 				{
 					Geometry geom = new Geometry("Box", b);
 					Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-					mat.setColor("Color", new ColorRGBA(0.005f*p.nbPassages, 0, 1.0f-0.005f*p.nbPassages, 0.5f));
+					mat.setColor("Color", new ColorRGBA(0.005f*p.nbPassages, 0, 1.0f-0.005f*p.nbPassages, 0.25f));
 					geom.setMaterial(mat);
 					if(relief)
 					{

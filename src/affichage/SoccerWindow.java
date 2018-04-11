@@ -71,17 +71,17 @@ public class SoccerWindow
 					angleVue.setText("Regard = " + df.format(j.angleVue*180/Math.PI)+"°");
 					direction.setText("Direction = " + df.format(j.direction*180/Math.PI) + "°"); 
 					energie.setText("Energie = " + df.format(j.energie));
-					vitesse.setText("Vitesse = " + df.format(j.vitesse));
-					distanceParcourue.setText("Distance = " + df.format(j.distanceParcourue));
+					vitesse.setText("Vitesse = " + df.format(j.vitesse)+" m/s");
+					distanceParcourue.setText("Distance = " + df.format(j.distanceParcourue) + " m");
 				} catch (NoPlayerException e1) {
 					tag_id.setText("ID : "+(int) listeJoueurs.getSelectedItem());
 					pos_x.setText("x = ---,---");
 					pos_y.setText("y = ---,---");
-					angleVue.setText("Regard = ---,---");
-					direction.setText("Direction = ---,---"); 
+					angleVue.setText("Regard = ---,--- °");
+					direction.setText("Direction = ---,--- °"); 
 					energie.setText("Energie = ---,---");
-					vitesse.setText("Vitesse = ---,---");
-					distanceParcourue.setText("Distance = ---,---");
+					vitesse.setText("Vitesse = ---,--- m/s");
+					distanceParcourue.setText("Distance = ---,--- m");
 				}
 			}
 			else
@@ -89,11 +89,11 @@ public class SoccerWindow
 				tag_id.setText("ID : --");
 				pos_x.setText("x = ---,---");
 				pos_y.setText("y = ---,---");
-				angleVue.setText("Regard = ---,---");
-				direction.setText("Direction = ---,---"); 
+				angleVue.setText("Regard = ---,--- °");
+				direction.setText("Direction = ---,--- °"); 
 				energie.setText("Energie = ---,---");
-				vitesse.setText("Vitesse = ---,---");
-				distanceParcourue.setText("Distance = ---,---");
+				vitesse.setText("Vitesse = ---,--- m/s");
+				distanceParcourue.setText("Distance = ---,--- m");
 			}
 		}
 	}
@@ -485,6 +485,7 @@ public class SoccerWindow
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		frame.setIconImage(new ImageIcon("res/football.png").getImage());
 		
 		listeJoueurs.setSize(100, 50);
 
@@ -555,8 +556,27 @@ public class SoccerWindow
 		loaded = true;
 		frame.setEnabled(true);
 		time.restart();
+		frame.toFront();
+	}
+	
+	public static void setSelectedPlayer(int id)
+	{
+		for(int i = 0; i< listeJoueurs.getItemCount();i++)
+		{
+			if(listeJoueurs.getItemAt(i) == id)
+			{
+				listeJoueurs.setSelectedIndex(i);
+				break;
+			}
+		}
+		listeJoueurs.repaint();
 	}
 
+	public static boolean isLoaded()
+	{
+		return loaded;
+	}
+	
 	public static void main(String[] args)
 	{
 		// create new JME appsettings
@@ -580,6 +600,6 @@ public class SoccerWindow
 		// Create the JFrame with the Canvas on the middle
 		createNewJFrame();
 		
-		canvasApplication.setPauseOnLostFocus(false);
+		canvasApplication.setPauseOnLostFocus(false);		
 	}
 }
